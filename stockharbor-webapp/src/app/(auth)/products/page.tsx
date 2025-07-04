@@ -1,8 +1,9 @@
-import { productService } from "@/lib/services/productService";
+import { Product, productService } from "@/lib/services/productService";
 import { ApiError } from "@/lib/services/api";
+import ProductsTable from "@/components/ProductsTable";
 
 export default async function ProductsPage() {
-  let products = [];
+  let products: Product[];
 
   try {
     products = await productService.getProducts();
@@ -29,18 +30,8 @@ export default async function ProductsPage() {
       {products.length === 0 ? (
         <p className="text-gray-500">No products found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="border rounded-lg p-6 shadow-sm bg-(--foreground)"
-            >
-              <h2 className="text-xl font-semibold mb-2 text-(--background)">
-                {product.name}
-              </h2>
-              <p className="text-gray-600 mb-4">{product.description}</p>
-            </div>
-          ))}
+        <div>
+          <ProductsTable products={products} />
         </div>
       )}
     </div>
