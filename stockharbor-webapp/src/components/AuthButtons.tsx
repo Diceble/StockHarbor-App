@@ -10,7 +10,9 @@ export default function AuthButtons({ session }: AuthButtonsProps) {
   if (!session) {
     return (
       <button
-        onClick={() => signIn("duende-identity-server6")}
+        onClick={() =>
+          signIn("duende-identity-server6", { callbackUrl: "/dashboard" })
+        }
         className="bg-accent-3 hover:bg-accent-2 text-white font-bold py-2 px-4 rounded"
       >
         Sign In
