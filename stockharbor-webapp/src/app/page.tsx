@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Image from "next/image";
-import AuthButtons from "@/components/AuthButtons";
+import AuthButtons from "@/features/auth/components/AuthButtons";
 
 export default async function Home() {
   // Get session on server - no loading state needed!

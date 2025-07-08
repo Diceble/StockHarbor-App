@@ -1,6 +1,5 @@
 "use client";
-
-import { Product } from "@/lib/services/productService";
+import { Product } from "@/features/products/types/product";
 
 export default function ProductsTable({ products }: { products: Product[] }) {
   return (
@@ -30,12 +29,9 @@ export default function ProductsTable({ products }: { products: Product[] }) {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {products.map((product) => (
-            <tr
-              key={product.productId}
-              className="hover:bg-gray-50 transition-colors"
-            >
+            <tr key={product.id} className="hover:bg-gray-50 transition-colors">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {product.productId}
+                {product.id}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {product.name}

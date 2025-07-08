@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthProvider } from "@/providers/AuthProvider";
-import SidebarMenu from "@/components/SidebarMenu";
+import { AuthProvider } from "@/features/auth/providers/AuthProvider";
+import SidebarMenu from "@/components/layout/SidebarMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

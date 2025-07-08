@@ -1,26 +1,10 @@
-import { apiService } from "./api";
-
-export interface Product {
-  productId: number;
-  name: string;
-  description: string;
-}
-
-export interface CreateProductRequest {
-  name: string;
-  description: string;
-}
-
-export interface UpdateProductRequest extends Partial<CreateProductRequest> {
-  id: number;
-}
-
-export interface ProductFilters {
-  category?: string;
-  search?: string;
-  page?: number;
-  pageSize?: number;
-}
+import {
+  CreateProductRequest,
+  Product,
+  ProductFilters,
+  UpdateProductRequest,
+} from "@/features/products/types/product";
+import { apiService } from "@/features/shared/services/api";
 
 export class ProductService {
   private readonly endpoint = "/api/product";
