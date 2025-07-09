@@ -2,29 +2,75 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import { X, Package, FileText } from "lucide-react";
 import ImageInput from "@/components/ui/ImageInput";
 import TextInput from "@/components/ui/TextInput";
+import SelectBoxInput from "@/components/ui/SelectBoxInput";
+import { enumToOptions, parseEnum } from "@/features/shared/utils/EnumUtils";
+import {
+  CreateProductRequest,
+  Product,
+  ProductStatus,
+  ProductType,
+} from "../types/product";
 
 interface CreateProductModalProps {
   onClose: () => void;
+  onSubmit: (productData: CreateProductRequest) => Promise<
+    | {
+        success: boolean;
+        data: Product;
+        error?: undefined;
+      }
+    | {
+        success: boolean;
+        error: unknown;
+        data?: undefined;
+      }
+  >;
 }
 
-const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose }) => {
+export default function CreateProductModal({
+  onClose,
+  onSubmit,
+}: CreateProductModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    price: "",
-    category: "",
+    productType: "0",
+    productStatus: "0",
     sku: "",
     inventory: "",
     images: [],
   });
 
-  const handleSubmit = (e: FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    onClose();
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleSubmit = async (e: FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const createProductRequest: CreateProductRequest = {
+        name: formData.name,
+        description: formData.description,
+        sku: formData.sku,
+        status: parseEnum(ProductStatus, formData.productStatus),
+        productType: parseEnum(ProductType, formData.productType),
+      };
+
+      const result = await onSubmit(createProductRequest);
+      if (result.success) {
+        console.log("Product created successfully:", result.data);
+        onClose();
+      } else {
+        console.error("Error creating product:", result.error);
+        alert("Failed to create product. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Failed to create product. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -74,7 +120,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose }) => {
               {/* Product Name */}
               <TextInput
                 label="Product Name"
-                name="productName"
+                name="name"
                 value={formData.name}
                 icon={<Package className="inline w-4 h-4 mr-1" />}
                 handleInputChange={handleInputChange}
@@ -86,6 +132,24 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose }) => {
                 name="sku"
                 value={formData.sku}
                 handleInputChange={handleInputChange}
+              />
+
+              <SelectBoxInput
+                name="productType"
+                label="Product type"
+                icon={<Package className="inline w-4 h-4 mr-1" />}
+                options={enumToOptions(ProductType)}
+                value={formData.productType}
+                onChange={handleInputChange}
+              />
+
+              <SelectBoxInput
+                name="productStatus"
+                label="Product status"
+                icon={<Package className="inline w-4 h-4 mr-1" />}
+                options={enumToOptions(ProductStatus)}
+                value={formData.productStatus}
+                onChange={handleInputChange}
               />
             </div>
 
@@ -104,42 +168,6 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose }) => {
                 placeholder="Describe your product..."
               />
             </div>
-
-            {/* Additional Options */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-gray-900 mb-3">
-                Additional Options
-              </h3>
-              <div className="space-y-3">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">
-                    Feature this product
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">
-                    Enable inventory tracking
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">
-                    Allow backorders
-                  </span>
-                </label>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -155,14 +183,14 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose }) => {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
             >
-              Create Product
+              {isSubmitting ? "Creating..." : "Create Product"}
             </button>
           </div>
         </div>
       </div>
     </div>
   );
-};
-export default CreateProductModal;
+}

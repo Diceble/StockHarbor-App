@@ -1,6 +1,9 @@
 "use client";
 
-import { Product } from "@/features/products/types/product";
+import {
+  CreateProductRequest,
+  Product,
+} from "@/features/products/types/product";
 import Button from "@/components/ui/Button";
 import ProductsTable from "@/features/products/components/ProductsTable";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -8,10 +11,23 @@ import CreateProductModal from "./CreateProductModal";
 
 interface ProductsPageClientProps {
   products: Product[];
+  onCreateProduct: (productData: CreateProductRequest) => Promise<
+    | {
+        success: boolean;
+        data: Product;
+        error?: undefined;
+      }
+    | {
+        success: boolean;
+        error: unknown;
+        data?: undefined;
+      }
+  >;
 }
 
 export default function ProductsPageClient({
   products,
+  onCreateProduct,
 }: ProductsPageClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,7 +57,12 @@ export default function ProductsPageClient({
         </div>
       )}
 
-      {showCreate && <CreateProductModal onClose={handleCloseModal} />}
+      {showCreate && (
+        <CreateProductModal
+          onClose={handleCloseModal}
+          onSubmit={onCreateProduct}
+        />
+      )}
     </div>
   );
 }

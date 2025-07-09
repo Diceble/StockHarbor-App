@@ -12,6 +12,10 @@ export interface Product {
 export interface CreateProductRequest {
   name: string;
   description: string;
+  sku: string;
+  status: ProductStatus;
+  productType: ProductType;
+  dimension?: Dimension;
 }
 
 export interface UpdateProductRequest extends Partial<CreateProductRequest> {
